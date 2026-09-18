@@ -6,15 +6,19 @@ test("explicit locale overrides environment and OS locale", () => {
   expect(resolveLocale("en", { LC_ALL: "zh_CN.UTF-8" }, "zh-CN")).toBe("en")
 })
 
-test("locale auto-detection prefers LC_ALL, then LANG, then OS locale", () => {
-  expect(resolveLocale(undefined, { LC_ALL: "zh_CN.UTF-8", LANG: "en_US.UTF-8" }, "en-US")).toBe("zh-CN")
-  expect(resolveLocale(undefined, { LANG: "zh_CN.UTF-8" }, "en-US")).toBe("zh-CN")
-  expect(resolveLocale(undefined, {}, "zh-CN")).toBe("zh-CN")
+test("default locale remains English regardless of environment", () => {
+  expect(resolveLocale(undefined, { LC_ALL: "zh_CN.UTF-8", LANG: "zh_CN.UTF-8" }, "zh-CN")).toBe("en")
+})
+
+test("auto locale detection prefers LC_ALL, then LANG, then OS locale", () => {
+  expect(resolveLocale("auto", { LC_ALL: "zh_CN.UTF-8", LANG: "en_US.UTF-8" }, "en-US")).toBe("zh-CN")
+  expect(resolveLocale("auto", { LANG: "zh_CN.UTF-8" }, "en-US")).toBe("zh-CN")
+  expect(resolveLocale("auto", {}, "zh-CN")).toBe("zh-CN")
 })
 
 test("unsupported explicit locales fall back to English", () => {
   expect(resolveLocale("fr-FR", { LANG: "zh_CN.UTF-8" }, "zh-CN")).toBe("en")
-  expect(resolveLocale(undefined, { LANG: "C.UTF-8" }, "en-US")).toBe("en")
+  expect(resolveLocale("auto", { LANG: "C.UTF-8" }, "en-US")).toBe("en")
 })
 
 test("zh-CN messages localize user-facing goal strings without changing tool identifiers", () => {
