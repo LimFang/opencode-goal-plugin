@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test"
 import { continuationPrompt, limitPrompt, systemReminder } from "../src/prompts"
+import type { GoalSnapshot } from "../src/state"
 
 const promptGoal = {
   objective: "完成国际化支持",
@@ -12,7 +13,7 @@ const promptGoal = {
   maxAutoTurns: 25,
   maxDurationSeconds: 1800,
   stopReason: null,
-} as never
+} as GoalSnapshot
 
 test("zh-CN continuation prompt keeps goal protocol identifiers and requests Chinese replies", () => {
   const prompt = continuationPrompt(promptGoal, "zh-CN")
