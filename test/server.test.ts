@@ -130,6 +130,30 @@ test("server plugin exposes Codex-style goal tools", async () => {
   expect(calls).toHaveLength(0)
 })
 
+
+test("zh-CN localizes commands and goal tool descriptions", async () => {
+  const hooks = await setupServer(
+    { client: { session: { promptAsync: async () => {} } } } as never,
+    { auto_continue: false, locale: "zh-CN" },
+  )
+  const config = {} as {
+    command?: Record<string, { description?: string; template: string }>
+  }
+
+  await hooks.config?.(config as never)
+
+  expect(config.command?.goal?.description).toBe("设置或查看当前会话的长期目标")
+  expect(config.command?.goal?.template).toContain('OpenCode 目标模式命令 "/goal" 已调用')
+  expect(config.command?.goal?.template).toContain("使用简体中文")
+  expect(config.command?.pause_goal?.description).toBe("暂停当前会话的长期目标")
+  expect(config.command?.resume_goal?.description).toBe("继续当前会话的长期目标")
+
+  const tools = hooks.tool
+  if (!tools) throw new Error("expected goal tools to be registered")
+  expect((tools.get_goal as { description?: string }).description).toContain("获取当前 OpenCode 会话的目标")
+  expect((tools.create_goal as { description?: string }).description).toContain("创建目标")
+})
+
 test("list_all_goals returns goals from other sessions", async () => {
   const hooks = await setupServer(
     { client: { session: { promptAsync: async () => {} } } } as never,
