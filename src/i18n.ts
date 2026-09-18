@@ -311,7 +311,10 @@ export function resolveLocale(
   environment: LocaleEnvironment = processEnvironment(),
   osLocale: string | undefined = systemLocale(),
 ): GoalLocale {
-  if (explicit?.trim()) return normalizeLocaleCandidate(explicit) ?? "en"
+  const configured = explicit?.trim()
+  if (!configured) return "en"
+  if (configured.toLowerCase() !== "auto") return normalizeLocaleCandidate(configured) ?? "en"
+
   for (const candidate of [environment.LC_ALL, environment.LANG, osLocale]) {
     const locale = normalizeLocaleCandidate(candidate)
     if (locale) return locale
