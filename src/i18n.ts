@@ -295,7 +295,10 @@ function normalizeLocaleCandidate(value: string | null | undefined): GoalLocale 
 
 function processEnvironment(): LocaleEnvironment {
   if (typeof process === "undefined") return {}
-  return process.env
+  return {
+    LC_ALL: process.env.LC_ALL,
+    LANG: process.env.LANG,
+  }
 }
 
 function systemLocale() {
